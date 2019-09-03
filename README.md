@@ -16,3 +16,8 @@ arduino-cli compile --fqbn adafruit:samd:adafruit_trellis_m4 lights
 arduino-cli board list
 arduino-cli upload -p /dev/cu.usbmodem1D11301 --fqbn adafruit:samd:adafruit_trellis_m4 lights
 ```
+
+Listen to serial port
+```
+cat /dev/cu.usbmodem1D11301
+```

@@ -4,6 +4,9 @@
 // that does things like auto-update the NeoPixels and stuff!
 Adafruit_NeoTrellisM4 trellis = Adafruit_NeoTrellisM4();
 
+enum Mode { menu, onOff };
+
+Mode mode = menu;
 boolean *lit_keys;
 
 void setup(){
@@ -12,35 +15,69 @@ void setup(){
   trellis.begin();
   trellis.setBrightness(80);
 
-  Serial.println("toggle keypad test!");
-
   lit_keys = new boolean[trellis.num_keys()];
-  
+
   for (int i=0; i<trellis.num_keys(); i++) {
     lit_keys[i] = false;
+  }
+
+  initMenu();
+}
+
+void initOnOff() {
+  for (int i=0; i<trellis.num_keys(); i++) {
+    trellis.setPixelColor(i, 0);
   }
 }
   
 void loop() {
-  // put your main code here, to run repeatedly:
   trellis.tick();
 
   while (trellis.available()){
-    keypadEvent e = trellis.read();
-    
-    if (e.bit.EVENT == KEY_JUST_PRESSED) {
-      int key = e.bit.KEY;  // shorthand for what was pressed
-      Serial.print(key); Serial.println(" pressed");
-      lit_keys[key] = !lit_keys[key];
-      if (lit_keys[key]) {
-        trellis.setPixelColor(key, Wheel(random(255)));
-      } else {
-        trellis.setPixelColor(key, 0);
-      }      
+    if (trellis.isPressed(0) && trellis.isPressed(7)) {
+      Serial.println("reset mode");
+      initMenu();
+      mode = menu;
+    }
+
+    switch(mode) {
+      case menu : Serial.println("menu mode"); menuLoop(); break;
+      case onOff : Serial.println("onOffMode"); onOffLoop(); break;
     }
   }
   
   delay(10);
+}
+
+void initMenu() {
+  for (int i=0; i<trellis.num_keys(); i++) {
+    trellis.setPixelColor(i, 0);
+  }
+  trellis.setPixelColor(0, trellis.Color(255, 0, 0));
+}
+
+void menuLoop() {
+  keypadEvent e = trellis.read();
+  if ((e.bit.EVENT == KEY_JUST_PRESSED) && (e.bit.KEY == 0)) {
+    Serial.println("Entered onOff mode");
+    initOnOff();
+    mode = onOff;
+  }
+}
+
+void onOffLoop() {
+  keypadEvent e = trellis.read();
+  
+  if (e.bit.EVENT == KEY_JUST_PRESSED) {
+    int key = e.bit.KEY;  // shorthand for what was pressed
+    Serial.print(key); Serial.println(" pressed");
+    lit_keys[key] = !lit_keys[key];
+    if (lit_keys[key]) {
+      trellis.setPixelColor(key, Wheel(random(255)));
+    } else {
+      trellis.setPixelColor(key, 0);
+    }      
+  }
 }
 
 
