@@ -33,17 +33,14 @@ void initOnOff() {
 void loop() {
   trellis.tick();
 
-  while (trellis.available()){
-    if (trellis.isPressed(0) && trellis.isPressed(7)) {
-      Serial.println("reset mode");
-      initMenu();
-      mode = menu;
-    }
-
-    switch(mode) {
-      case menu : Serial.println("menu mode"); menuLoop(); break;
-      case onOff : Serial.println("onOffMode"); onOffLoop(); break;
-    }
+  if (trellis.isPressed(0) && trellis.isPressed(7)) {
+    Serial.println("reset mode");
+    initMenu();
+    mode = menu;
+  }
+  switch(mode) {
+    case menu : menuLoop(); break;
+    case onOff : onOffLoop(); break;
   }
   
   delay(10);
@@ -66,17 +63,19 @@ void menuLoop() {
 }
 
 void onOffLoop() {
-  keypadEvent e = trellis.read();
-  
-  if (e.bit.EVENT == KEY_JUST_PRESSED) {
-    int key = e.bit.KEY;  // shorthand for what was pressed
-    Serial.print(key); Serial.println(" pressed");
-    lit_keys[key] = !lit_keys[key];
-    if (lit_keys[key]) {
-      trellis.setPixelColor(key, Wheel(random(255)));
-    } else {
-      trellis.setPixelColor(key, 0);
-    }      
+  while (trellis.available()){
+    keypadEvent e = trellis.read();
+    
+    if (e.bit.EVENT == KEY_JUST_PRESSED) {
+      int key = e.bit.KEY;  // shorthand for what was pressed
+      Serial.print(key); Serial.println(" pressed");
+      lit_keys[key] = !lit_keys[key];
+      if (lit_keys[key]) {
+        trellis.setPixelColor(key, Wheel(random(255)));
+      } else {
+        trellis.setPixelColor(key, 0);
+      }      
+    }
   }
 }
 
