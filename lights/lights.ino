@@ -1,15 +1,17 @@
 #include "Adafruit_NeoTrellisM4.h"
+#include "lightsOutMode.h"
 #include "onOffMode.h"
 
 // The NeoTrellisM4 object is a keypad and neopixel strip subclass
 // that does things like auto-update the NeoPixels and stuff!
 Adafruit_NeoTrellisM4 trellis = Adafruit_NeoTrellisM4();
 
-enum Mode { menu, onOff };
+enum Mode { menu, lightsOut, onOff };
 
 Mode mode = menu;
 
 OnOffMode onOffMode = OnOffMode(trellis);
+LightsOutMode lightsOutMode = LightsOutMode(trellis);
 
 void setup(){
   Serial.begin(115200);
@@ -30,6 +32,7 @@ void loop() {
   }
   switch(mode) {
     case menu : menuLoop(); break;
+    case lightsOut: lightsOutMode.loop(); break;
     case onOff : onOffMode.loop(); break;
   }
   
@@ -41,6 +44,7 @@ void initMenu() {
     trellis.setPixelColor(i, 0);
   }
   trellis.setPixelColor(0, trellis.Color(255, 0, 0));
+  trellis.setPixelColor(8, trellis.Color(255, 0, 0));
 }
 
 void menuLoop() {
@@ -49,5 +53,10 @@ void menuLoop() {
     Serial.println("Entered onOff mode");
     onOffMode.init();
     mode = onOff;
+  }
+  if ((e.bit.EVENT == KEY_JUST_PRESSED) && (e.bit.KEY == 8)) {
+    Serial.println("Entered lightsOut mode");
+    lightsOutMode.init();
+    mode = lightsOut;
   }
 }
