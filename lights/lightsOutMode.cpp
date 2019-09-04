@@ -11,6 +11,7 @@ LightsOutMode::LightsOutMode(Adafruit_NeoTrellisM4 &t) {
 
 void LightsOutMode::init() {
   for (int i=0; i<trellis->num_keys(); i++) {
+    lit_keys[i] = false;
     trellis->setPixelColor(i, 0);
   }
 
@@ -26,7 +27,7 @@ void LightsOutMode::loop() {
       int key = e.bit.KEY;  // shorthand for what was pressed
       Serial.print(key); Serial.println(" pressed");
       invertKey(key);
-      if (key + 1 % 8 != 0) {
+      if ((key + 1) % 8 != 0) {
         invertKey(key + 1);
       }
       if (key % 8 != 0) {
