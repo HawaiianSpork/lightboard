@@ -17,7 +17,7 @@ void setup(){
   Serial.begin(115200);
     
   trellis.begin();
-  trellis.setBrightness(80);
+  trellis.setBrightness(50);
 
   initMenu();
 }
