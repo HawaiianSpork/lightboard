@@ -1,5 +1,16 @@
+Games for my children on the [Adafruit Trellis](https://www.adafruit.com/product/3938)
 
+## What it does
 
+When the board starts a menu is lit up.  Depending on which light is pushed the board will enter that game.  To return the menu press the upper left and upper right buttons at the same time.
+
+### Games:
+ - On/Off - When a button is pressed it turns on to a random color or off
+ - Lights Out - any key pressed toggles the on state of that key and the adjacent keys, the objective is to turn all the keys off.
+
+## Building and Installing on the Mac
+
+This assumes you have installed arduino-cli
 ```
 arduino-cli core update-index
 
